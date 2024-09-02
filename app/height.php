@@ -15,7 +15,6 @@ if (!isset($_SESSION['aemail'])) {
 }
 
 
-
 ?>
 
 
@@ -56,11 +55,22 @@ if (!isset($_SESSION['aemail'])) {
   <link rel="stylesheet" href="../css/bracket.css">
 
   <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto);
+
+body {
+    font-family: Roboto, sans-serif;
+}
+
+#chart {
+    width: 80vw;
+    margin: 35px auto;
+}
     td {
       color: black !important;
     }
   </style>
 
+</head>
 </head>
 
 <body>
@@ -78,7 +88,7 @@ if (!isset($_SESSION['aemail'])) {
     <div class="br-header-right">
       <nav class="nav">
         <div class="dropdown">
-
+        
           <div class="dropdown-menu dropdown-menu-header wd-300 pd-0-force">
             <div class="d-flex align-items-center justify-content-between pd-y-10 pd-x-20 bd-b bd-gray-200">
               <label class="tx-12 tx-info tx-uppercase tx-semibold tx-spacing-2 mg-b-0">Messages</label>
@@ -146,7 +156,7 @@ if (!isset($_SESSION['aemail'])) {
           </div><!-- dropdown-menu -->
         </div><!-- dropdown -->
         <div class="dropdown">
-
+         
           <div class="dropdown-menu dropdown-menu-header wd-300 pd-0-force">
             <div class="d-flex align-items-center justify-content-between pd-y-10 pd-x-20 bd-b bd-gray-200">
               <label class="tx-12 tx-info tx-uppercase tx-semibold tx-spacing-2 mg-b-0">Notifications</label>
@@ -197,7 +207,7 @@ if (!isset($_SESSION['aemail'])) {
 
       <a href="card-dashboard.html" class="br-menu-link">
         <div class="br-menu-item">
-          <i class="fa-solid fa-chart-line"></i>
+        <i class="fa-solid fa-chart-line"></i>
           <a href="height.php"><span class="menu-item-label">Chart</span></a>
         </div><!-- menu-item -->
       </a><!-- br-menu-link -->
@@ -261,165 +271,39 @@ if (!isset($_SESSION['aemail'])) {
       </li>
     </ul><!-- sidebar-tabs -->
 
-
+  
 
   </div><!-- br-sideright -->
   <!-- ########## END: RIGHT PANEL ########## --->
 
+
   <!-- ########## START: MAIN PANEL ########## -->
   <div class="br-mainpanel">
-    <div class="pd-30">
-      <h4 class="tx-gray-800 mg-b-5"><img src="../img/litem_logo.png" alt="" class="img-fluid" style="height: 80px; width: 180px;"></h4>
-      <p class="mg-b-0">Here Are All Data Of CRM</p>
-    </div><!-- d-flex -->
 
-    <div class="br-pagebody mg-t-5 pd-x-30">
-      <div class="row row-sm">
-        <?php
-        $mysqli = mysqli_connect("localhost", "root", "", "crm_data");
-
-        // Check connection
-        if ($mysqli->connect_error) {
-          die("Connection failed: " . $mysqli->connect_error);
-        }
-
-        // SQL query to fetch month-wise visit count
-        $sql = "SELECT COUNT(*) AS visit_count, DATE_FORMAT(`date`, '%Y-%m') AS month_year 
-        FROM `main_table` 
-        GROUP BY month_year 
-        ORDER BY month_year DESC;";
-
-        $result = $mysqli->query($sql);
-
-        if ($result->num_rows > 0) {
-          // Loop through all the rows
-          while ($row = $result->fetch_assoc()) {
-            $visit_count = $row['visit_count'];
-            $month_year = $row['month_year'];
-            // echo "Month: " . $month_year . " - Visits: " . $visit_count . "<br>";
-
-        ?>
-            <div class="col-sm-6 col-md-4 mg-t-20 mg-sm-t-0">
-              <div class="bg-teal rounded overflow-hidden">
-                <div class="pd-25 d-flex align-items-center">
-                  <i class="fa-solid fa-database tx-60 lh-0 tx-white op-7"></i>
-                  <div class="mg-l-20">
-
-                    <p class="tx-10 tx-spacing-1 tx-mont tx-medium tx-uppercase tx-white-8 mg-b-10">Total Visits</p>
-                    <span class="tx-20 tx-roboto tx-white-6"><?= $visit_count ?></span>
-                    <p class="tx-24 tx-white tx-lato tx-bold mg-b-2 lh-1"><?= $month_year ?></p>
-        
-                  </div>
-                </div>
-              </div>
-            </div>
-            <?php
-
-}
-} else {
-echo "No data found.";
-}
-
-$mysqli->close();
-
-  ?>
-
-
-      </div>
-      <div class="row row-sm mg-t-20">
-        <div class="col-12">
-
-          <table id="myTable" class="display" class="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Phone</th>
-                <th scope="col">Message</th>
-                <th scope="col">State</th>
-                <th scope="col">Qtype</th>
-                <th scope="col">Title</th>
-                <th scope="col">Date</th>
-                <th scope="col">Action</th>
-              </tr>
-            </thead>
-
-
-            <tbody>
-              <?php
-
-              // session_start();
-              if (empty($_SESSION['csrf_token'])) {
-                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-              }
-
-              $conn = mysqli_connect("localhost", "root", "", "crm_data");
-
-              if (!$conn) {
-                die("Connection failed: " . mysqli_connect_error());
-              }
-
-              $query = mysqli_query($conn, "SELECT `mid`,`name`,`email`,`phone`,`message`,`state`,`q_type`,`title_name`,`date` FROM `main_table` ORDER BY date DESC");
-
-              if ($query) {
-                while ($row = mysqli_fetch_assoc($query)) {
-
-                  $record_id = $row['mid'];
-
-                  echo "<tr>";
-                  echo "<td>" . ++$record_id . "</td>";
-                  echo "<td>" . $row['name'] . "</td>";
-                  echo "<td>" . $row['email'] . "</td>";
-                  echo "<td>" . $row['phone'] . "</td>";
-                  echo "<td>" . $row['message'] . "</td>";
-                  echo "<td>" . $row['state'] . "</td>";
-                  echo "<td>" . $row['q_type'] . "</td>";
-                  echo "<td>" . $row['title_name'] . "</td>";
-                  echo "<td>" . $row['date'] . "</td>";
-                  echo "<td class='text-center'>
-    <div class='d-flex justify-content-center'> 
-        <form action='delete.php' method='POST' style='display:inline;' class='me-2'> <!-- Add margin between buttons -->
-            <input type='hidden' name='id' value='<?= $record_id; ?>'>
-            <input type='hidden' name='csrf_token' value='<?= ." . $_SESSION['csrf_token'] . ".; ?>'>
-            <button type='submit' class='btn btn-danger btn-sm'> <!-- Use btn-sm for smaller buttons -->
-                <i class='fa-solid fa-trash'></i>
-            </button>
-        </form>
-
-        <form action='duplicate.php' method='POST' style='display:inline;' class='me-2'> <!-- Add margin between buttons -->
-            <input type='hidden' name='id' value='<?= $record_id; ?>'>
-            <button type='submit' class='btn btn-success btn-sm'>
-                <i class='fa-solid fa-copy'></i>
-            </button>
-        </form>
-
-        <form action='edit.php' method='POST' style='display:inline;'>
-            <input type='hidden' name='id' value='<?= $record_id; ?>'>
-            <button type='submit' class='btn btn-primary btn-sm'> <!-- Corrected 'btn-primary' class -->
-                <i class='fa-solid fa-pen-to-square'></i>
-            </button>
-        </form>
-
+    <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
+      <h4 class="tx-gray-800 mg-b-5">Height Utilities</h4>
+      <p class="mg-b-0">Use height utilities to quickly set a height of an element.</p>
     </div>
-</td>";
-                  echo "</tr>";
-                }
-              }
-              ?>
 
-            </tbody>
-          </table>
+    <div class="br-pagebody">
+      <div class="br-section-wrapper">
+        <h6 class="tx-gray-800 tx-uppercase tx-bold tx-14 mg-b-10">Setting a Height</h6>
+        <p class="mg-b-25 mg-lg-b-50">You can set a height to an element instantly by using the following utilities classes for height.</p>
 
+
+        <div class="row">
+          <div id="chart">
+            <h3>Month Data</h3>
+
+          </div>
         </div>
-        <div class="col-12">
+        <!-- Page Headings End -->
 
 
+      </div><!-- br-section-wrapper -->
+    </div><!-- br-pagebody -->
 
-        </div>
-      </div>
 
-    </div>
 
 
     <footer class="br-footer">
@@ -437,6 +321,8 @@ $mysqli->close();
     </footer>
   </div><!-- br-mainpanel -->
   <!-- ########## END: MAIN PANEL ########## -->
+
+
 
   <script src="../lib/jquery/jquery.js"></script>
   <!-- pagination data  -->
@@ -472,10 +358,7 @@ $mysqli->close();
     $(function() {
       'use strict'
 
-      // FOR DEMO ONLY
-      // menu collapsed by default during first page load or refresh with screen
-      // having a size between 992px and 1299px. This is intended on this page only
-      // for better viewing of widgets demo.
+
       $(window).resize(function() {
         minimizeMenu();
       });
@@ -498,6 +381,64 @@ $mysqli->close();
   </script>
 </body>
 
-<!-- Mirrored from themepixels.me/demo/bracket/app/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 30 Aug 2024 09:24:48 GMT -->
-
 </html>
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<?php
+$conn = mysqli_connect("localhost", "root", "", "crm_data");
+
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+$query = mysqli_query($conn, "SELECT DAY(`date`) as day, COUNT(*) AS count FROM `main_table` WHERE MONTH(`date`) = MONTH(CURDATE()) AND YEAR(`date`) = YEAR(CURDATE()) GROUP BY DAY(`date`)");
+
+$daywiseData = array_fill(1, 31, 0);
+
+if ($query) {
+    while ($row = mysqli_fetch_assoc($query)) {
+        $daywiseData[(int)$row['day']] = (int)$row['count'];
+    }
+} else {
+    echo "Query failed: " . mysqli_error($conn);
+    die();
+}
+
+mysqli_close($conn);
+?>
+
+<script>
+    var daysInMonth = 31;
+    var categories = [];
+    for (var i = 1; i <= daysInMonth; i++) {
+        categories.push(i);
+    }
+
+    // PHP data to JavaScript
+    var daywiseData = <?php echo json_encode(array_values($daywiseData)); ?>;
+
+    var options = {
+        chart: {
+            type: 'line'
+        },
+        series: [{
+            name: 'Queries',
+            data: daywiseData
+        }],
+        colors: ['#008000'],
+        chart: {
+            height: 273,
+            type: 'area',
+            zoom: {
+                enabled: false
+            }
+        },
+        xaxis: {
+            categories: categories
+        }
+    }
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+
+    chart.render();
+</script>
